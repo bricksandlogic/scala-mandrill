@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package net.gutefrage.mandrill.test
 
-import net.gutefrage.mandrill.messages.SendTemplate.{Message, TemplateContent, TemplateName}
 import net.gutefrage.mandrill.messages._
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -32,7 +31,7 @@ object messages {
     content <- Gen.alphaNumStr
   } yield TemplateContent(name, content)
 
-  val recipientTypeGen: Gen[Recipient.RecipientType] = Gen.oneOf(Recipient.RecipientType.enum.values.toSeq)
+  val recipientTypeGen: Gen[Recipient.RecipientType] = Gen.oneOf(Recipient.RecipientType.values.toSeq)
 
   /**
    * Generate a random example.tld mail address.
@@ -45,8 +44,8 @@ object messages {
   } yield s"$prefix@example.$tld"
 
   val recipientGen: Gen[Recipient] = for {
-    email <- exampleEMailAddress.map(Recipient.Email)
-    name <- Gen.option(Gen.alphaNumStr.map(Recipient.Name))
+    email <- exampleEMailAddress.map(Email)
+    name <- Gen.option(Gen.alphaNumStr.map(Name))
     recipientType <- Gen.option(recipientTypeGen)
   } yield Recipient(email, name, recipientType)
 
@@ -58,7 +57,7 @@ object messages {
   val messageGen: Gen[Message] = for {
     recipientMergeVars <- Gen.listOf(recipientMergeVarsGen)
     globalMergeVars <- Gen.listOf(mergeVarGen)
-    subject <- Gen.option(Gen.alphaNumStr.map(Message.Subject))
+    subject <- Gen.option(Gen.alphaNumStr.map(Subject))
   } yield Message(recipientMergeVars, globalMergeVars, subject)
 
   val sendTemplateGen: Gen[SendTemplate] = for {
@@ -72,7 +71,6 @@ object messages {
     SendTemplate(
       key,
       templateName,
-      to,
       templateContent,
       message,
       sendAt

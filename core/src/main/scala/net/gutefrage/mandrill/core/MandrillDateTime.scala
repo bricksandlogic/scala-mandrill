@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,6 @@
 
 package net.gutefrage.mandrill.core
 
-import org.joda.time.DateTime
+import java.time.LocalDateTime
 
-final case class MandrillDateTime(value: DateTime) extends AnyVal
+final case class MandrillDateTime(value: LocalDateTime) extends AnyVal

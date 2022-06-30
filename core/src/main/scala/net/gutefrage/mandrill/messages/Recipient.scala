@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 
 package net.gutefrage.mandrill.messages
 
-import enum.Enum
 import Recipient._
+import enumeratum.{Enum, EnumEntry}
+
+final case class Email(value: String) extends AnyVal
+final case class Name(value: String) extends AnyVal
 
 /**
  *
@@ -29,17 +32,15 @@ import Recipient._
 final case class Recipient(email: Email, name: Option[Name] = None, `type`: Option[RecipientType] = None)
 
 object Recipient {
-  final case class Email(value: String) extends AnyVal
-  final case class Name(value: String) extends AnyVal
 
   /**
    * == Mandrill Recipient Type ==
    *
-   * The header type to use for the recipien
+   * The header type to use for the recipient
    */
-  sealed abstract class RecipientType(val name: String)
+  sealed abstract class RecipientType(val name: String) extends EnumEntry
 
-  object RecipientType {
+  case object RecipientType extends Enum[RecipientType] {
     case object To extends RecipientType("to")
     case object Cc extends RecipientType("cc")
     case object Bcc extends RecipientType("bcc")
@@ -47,6 +48,6 @@ object Recipient {
     /**
      * Enumeration of all defined [[RecipientType]]s
      */
-    val enum: Enum[RecipientType] = Enum.derived[RecipientType]
+    val values = findValues
   }
 }

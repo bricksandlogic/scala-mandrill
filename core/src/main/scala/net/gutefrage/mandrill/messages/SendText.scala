@@ -16,4 +16,12 @@
 
 package net.gutefrage.mandrill.messages
 
-final case class MergeVar(name: String, content: String)
+import net.gutefrage.mandrill.core.{MandrillApiKey, MandrillDateTime}
+
+case class SendText(
+  key: MandrillApiKey,
+  to: Seq[Recipient] = Nil,
+  template_content: Seq[TemplateContent] = Nil,
+  message: Message = Message(),
+  send_at: Option[MandrillDateTime] = None
+)

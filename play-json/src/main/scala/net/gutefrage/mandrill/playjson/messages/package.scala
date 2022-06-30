@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package net.gutefrage.mandrill.playjson
 
 import net.gutefrage.mandrill.messages._
-import net.gutefrage.mandrill.messages.SendTemplate.{Message, TemplateContent}
 import net.gutefrage.mandrill.messages.SendTemplateResponse.{RejectReason, Status}
 import net.gutefrage.mandrill.playjson.json.JsonWrites._
 import play.api.libs.json._
@@ -32,7 +31,13 @@ package object messages {
   // -------- Write instances ---------
   // ----------------------------------
 
-  implicit val recipientTypeWrites: Writes[Recipient.RecipientType] =
+  implicit val emailWrites =
+    Writes[Email](t => JsString(t.value))
+
+  implicit val nameWrites =
+    Writes[Name](t => JsString(t.value))
+
+  implicit val recipientTypeWrites: play.api.libs.json.Writes[Recipient.RecipientType] =
     Writes[Recipient.RecipientType](t => JsString(t.name))
 
   implicit val recipientWrites: OWrites[Recipient] = Json.writes[Recipient]
@@ -42,9 +47,9 @@ package object messages {
   // minimal merge vars with recipients format
   implicit val recipientMergeVarsWrites: OWrites[RecipientMergeVars] = Json.writes[RecipientMergeVars]
 
-  implicit val sendTemplateContent: OWrites[TemplateContent] = Json.writes[SendTemplate.TemplateContent]
+  implicit val sendTemplateContent: OWrites[TemplateContent] = Json.writes[TemplateContent]
 
-  implicit val sendTemplateMessageWrites: OWrites[Message] = Json.writes[SendTemplate.Message]
+  implicit val sendTemplateMessageWrites: OWrites[Message] = Json.writes[Message]
 
   implicit val sendTemplateWrites: OWrites[SendTemplate] = Json.writes[SendTemplate]
 
@@ -54,10 +59,10 @@ package object messages {
 
   implicit val sendTemplateResponseStatusReads: Reads[Status] = Reads({
     case JsString(label) =>
-      SendTemplateResponse.statusEnum.values.find(_.status == label) match {
+      SendTemplateResponse.Status.values.find(_.status == label) match {
         case Some(field) => JsSuccess(field)
         case None =>
-          val validValues = SendTemplateResponse.statusEnum.values.map(_.status)
+          val validValues = SendTemplateResponse.Status.values.map(_.status)
           JsError(s"Invalid value $label, must be one of ${validValues mkString ", "}")
       }
     case other => JsError(s"Invalid type $other, must be a string!")
@@ -65,10 +70,10 @@ package object messages {
 
   implicit val sendTemplateResponseRejectReasonReads: Reads[RejectReason] = Reads({
     case JsString(label) =>
-      SendTemplateResponse.rejectReasonEnum.values.find(_.reason == label) match {
+      SendTemplateResponse.RejectReason.values.find(_.reason == label) match {
         case Some(field) => JsSuccess(field)
         case None =>
-          val validValues = SendTemplateResponse.statusEnum.values.map(_.status)
+          val validValues = SendTemplateResponse.Status.values.map(_.status)
           JsError(s"Invalid value $label, must be one of ${validValues mkString ", "}")
       }
     case other => JsError(s"Invalid type $other, must be a string!")

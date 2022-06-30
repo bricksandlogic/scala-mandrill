@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package net.gutefrage.mandrill
 
 import net.gutefrage.mandrill.core.MandrillApiKey
-import net.gutefrage.mandrill.messages.SendTemplate
+import net.gutefrage.mandrill.messages.{SendTemplate, TemplateName}
 
 /**
  *
@@ -36,7 +36,7 @@ class Messages(apiKey: MandrillApiKey) {
    */
   def sendTemplate(templateName: String): SendTemplate = SendTemplate(
     key = apiKey,
-    template_name = SendTemplate.TemplateName(templateName)
+    template_name = TemplateName(templateName)
   )
 
 }

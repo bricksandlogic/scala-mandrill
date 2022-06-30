@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
-package net.gutefrage.mandrill.messages
+package net.gutefrage.mandrill.circe
 
-final case class MergeVar(name: String, content: String)
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import net.gutefrage.mandrill.users.{Ping, Pong}
+
+import net.gutefrage.mandrill.circe.core._
+
+package object users {
+
+  implicit lazy val decodeElasticSearchMeta: Decoder[Pong] = deriveDecoder[Pong]
+  implicit lazy val encodeElasticSearchMeta: Encoder[Ping] = deriveEncoder[Ping]
+
+}

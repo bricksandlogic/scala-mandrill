@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package net.gutefrage.mandrill.playjson
 
+import java.time.format.DateTimeFormatter
+
 import net.gutefrage.mandrill.core._
-import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.json._
 
@@ -31,10 +32,11 @@ package object core {
   // -------- Write instances ---------
   // ----------------------------------
 
-  private val format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
+  private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
   implicit val mandrillDateTimeWrite: Writes[MandrillDateTime] =
     Writes[MandrillDateTime] { dateTime =>
-      JsString(format.print(dateTime.value))
+      JsString(format.format(dateTime.value))
     }
 
   // ----------------------------------
@@ -43,16 +45,20 @@ package object core {
 
   implicit val apiErrorNameReads: Reads[MandrillApiErrorName] = Reads({
     case JsString(label) =>
-      MandrillApiErrorName.enum.decode(label) match {
+      MandrillApiErrorName.withNameEither(label) match {
         case Right(field) => JsSuccess(field)
         case Left(error) =>
-          JsError(s"Invalid value $label, must be one of ${error.validValues}")
+          JsError(s"Invalid value $label, must be one of ${error.enumValues}")
       }
     case other => JsError(s"Invalid type $other, must be a string!")
   })
 
+  val valError: ValidationError = ValidationError("status != error")
+
   implicit val apiErrorReads: Reads[MandrillApiError] = for {
-    _ <- (JsPath \ "status").read[String].filter(ValidationError("status != error"))(_ == "error")
+    _ <- (JsPath \ "status").read[String].filter(JsonValidationError(valError.messages, valError.args)) { x =>
+      x == "error"
+    }
     msg <- (JsPath \ "message").read[String]
     error <- (JsPath \ "name").read[MandrillApiErrorName]
   } yield MandrillApiError(msg, error)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package net.gutefrage.mandrill.test
 
+import java.time.{Instant, LocalDateTime}
+import java.util.TimeZone
+
 import net.gutefrage.mandrill.core._
-import org.joda.time.DateTime
 import org.scalacheck.{Arbitrary, Gen}
 
 object core {
 
   val apiKeyGen: Gen[MandrillApiKey] = Gen.identifier.map(MandrillApiKey)
 
-  val apiErrorNameGen: Gen[MandrillApiErrorName] = Gen.oneOf(MandrillApiErrorName.enum.values.toSeq)
+  val apiErrorNameGen: Gen[MandrillApiErrorName] = Gen.oneOf(MandrillApiErrorName.values.toSeq)
 
   val apiErrorGen: Gen[MandrillApiError] = for {
     message <- Gen.alphaNumStr
@@ -32,7 +34,15 @@ object core {
   } yield MandrillApiError(message, errorName)
 
   val mandrillDateTimeGen: Gen[MandrillDateTime] =
-    Gen.posNum[Long].map(millis => MandrillDateTime(new DateTime(millis)))
+    Gen
+      .posNum[Long]
+      .map(
+        millis =>
+          MandrillDateTime(
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(millis),
+                                    TimeZone
+                                      .getDefault()
+                                      .toZoneId())))
 
   object arbitrary {
     implicit val arbitraryApiKey: Arbitrary[MandrillApiKey] = Arbitrary(apiKeyGen)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package net.gutefrage.mandrill.messages
 
-import enum.Enum
+import enumeratum.{Enum, EnumEntry}
 
 /**
  * == Send-Template Response ==
@@ -36,27 +36,31 @@ final case class SendTemplateResponse(
 )
 
 object SendTemplateResponse {
-  sealed abstract class Status(val status: String)
+  sealed abstract class Status(val status: String) extends EnumEntry
 
-  object Send extends Status("sent")
-  object Scheduled extends Status("scheduled")
-  object Queued extends Status("queued")
-  object Rejected extends Status("rejected")
-  object Invalid extends Status("invalid")
+  case object Status extends Enum[Status] {
+    case object Send extends Status("sent")
+    case object Scheduled extends Status("scheduled")
+    case object Queued extends Status("queued")
+    case object Rejected extends Status("rejected")
+    case object Invalid extends Status("invalid")
 
-  val statusEnum: Enum[Status] = Enum.derived[Status]
+    val values = findValues
+  }
 
-  sealed abstract class RejectReason(val reason: String)
+  sealed abstract class RejectReason(val reason: String) extends EnumEntry
 
-  object Rule extends RejectReason("rule")
-  object Spam extends RejectReason("spam")
-  object Unsubscribed extends RejectReason("unsub")
-  object Custom extends RejectReason("custom")
-  object HardBounce extends RejectReason("hard-bounce")
-  object SoftBounce extends RejectReason("soft-bounce")
-  object InvalidSender extends RejectReason("invalid-sender")
-  object TestModeLimit extends RejectReason("test-mode-limit")
+  case object RejectReason extends Enum[RejectReason] {
+    case object Rule extends RejectReason("rule")
+    case object Spam extends RejectReason("spam")
+    case object Unsubscribed extends RejectReason("unsub")
+    case object Custom extends RejectReason("custom")
+    case object HardBounce extends RejectReason("hard-bounce")
+    case object SoftBounce extends RejectReason("soft-bounce")
+    case object InvalidSender extends RejectReason("invalid-sender")
+    case object TestModeLimit extends RejectReason("test-mode-limit")
+    val values = findValues
 
-  val rejectReasonEnum: Enum[RejectReason] = Enum.derived[RejectReason]
+  }
 
 }

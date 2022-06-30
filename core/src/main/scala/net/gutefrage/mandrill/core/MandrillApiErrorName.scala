@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 gutefrage.net GmbH
+ * Copyright 2015 Heiko Seeberger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package net.gutefrage.mandrill.core
 
-import enum.Enum
+import enumeratum.{Enum, EnumEntry}
 
 /**
  * == Mandrill API Error ==
  *
  * Mandrill has a fixed format for API errors, which is represented by this case object structure
  */
-sealed trait MandrillApiErrorName
+sealed abstract class MandrillApiErrorName extends EnumEntry
 
-object MandrillApiErrorName {
+case object MandrillApiErrorName extends Enum[MandrillApiErrorName] {
 
   // common errors
   case object Invalid_Key extends MandrillApiErrorName
@@ -37,5 +37,6 @@ object MandrillApiErrorName {
   case object Unknown_Template extends MandrillApiErrorName
   case object PaymentRequired extends MandrillApiErrorName
 
-  val enum: Enum[MandrillApiErrorName] = Enum.derived[MandrillApiErrorName]
+  val values = findValues
+
 }
