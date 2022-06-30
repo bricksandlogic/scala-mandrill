@@ -3,6 +3,8 @@ import sbtunidoc.ScalaUnidocPlugin._
 import ReleaseTransformations._
 import de.heikoseeberger.sbtheader.License.ALv2
 import de.heikoseeberger.sbtheader.License._
+import Common.supportedScalaVersions
+
 resolvers := Resolvers.resolvers
 
 headerLicenseStyle := HeaderLicenseStyle.SpdxSyntax
@@ -27,6 +29,7 @@ lazy val credentialSettings = Seq(
 )
 //
 lazy val sharedPublishSettings = Seq(
+  crossScalaVersions := supportedScalaVersions,
   releaseCrossBuild := true,
   releaseTagName := s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}",
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
@@ -113,7 +116,7 @@ lazy val testkit = project
     name := "mandrill-test-kit",
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.1.0",
-      "org.scalacheck" %% "scalacheck" % "1.13.4"
+      "org.scalacheck" %% "scalacheck" % "1.16.0"
     )
   )
   .dependsOn(core)
@@ -144,7 +147,7 @@ lazy val mandrillcirce = project
       "io.circe" %% "circe-core",
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-parser",
-      "io.circe" % "circe-generic-extras_2.12"
+      "io.circe" %% "circe-generic-extras"
     ).map(_ % "0.14.1")
   )
   .dependsOn(core, testkit % "test->compile")
@@ -158,10 +161,13 @@ lazy val noPublishSettings = Seq(
 lazy val scala_mandrill =
   project
     .in(file("."))
-    .settings(moduleName := "root")
+    .settings(
+      moduleName := "root",
+      crossScalaVersions := Nil,
+    )
     .settings(publishSettings)
     .settings(noPublishSettings)
-    .aggregate(core, testkit, playjson)
+    .aggregate(core, testkit, mandrillcirce)
 
 //lazy val docs = project
 //  .in(file("docs"))
