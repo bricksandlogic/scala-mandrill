@@ -37,6 +37,7 @@ case object MandrillApiErrorName extends Enum[MandrillApiErrorName] {
   case object Unknown_Template extends MandrillApiErrorName
   case object PaymentRequired extends MandrillApiErrorName
 
-  val values = findValues
+  // todo: revert to macros when Enumeratum supports Scala 3
+  val values = Vector(Invalid_Key, ValidationError, GeneralError, Unknown_Subaccount, Unknown_Template, PaymentRequired)
 
 }

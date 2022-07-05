@@ -16,17 +16,13 @@
 
 package net.gutefrage.mandrill.circe
 
-import java.time.format.DateTimeFormatter
-
-import io.circe.Decoder.Result
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
-import io.circe.generic.extras.semiauto._
-import io.circe.parser._
+import io.circe.{Decoder, Encoder, Json}
+import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax._
-//import io.circe.generic.auto._
-import io.circe.{Decoder, Encoder, HCursor, Json}
-import net.gutefrage.mandrill.{Mandrill, Messages, Users}
+import net.gutefrage.mandrill.circe.EnumCodecs._
 import net.gutefrage.mandrill.core.{MandrillApiError, MandrillApiErrorName, MandrillApiKey, MandrillDateTime}
+
+import java.time.format.DateTimeFormatter
 
 package object core {
 
@@ -36,13 +32,9 @@ package object core {
     override def apply(mdt: MandrillDateTime): Json = format.format(mdt.value).asJson
   }
 
-  implicit val apiErrorNameDecoder = deriveDecoder[MandrillApiErrorName]
+  implicit val apiErrorNameDecoder: Decoder[MandrillApiErrorName] = enumDecoder(MandrillApiErrorName)
 
-  implicit val apiErrorDecoder = deriveDecoder[MandrillApiError]
+  implicit val apiErrorDecoder: Decoder[MandrillApiError] = deriveDecoder[MandrillApiError]
 
-  implicit val mandrillApiKeyEncoder: Encoder[MandrillApiKey] = deriveUnwrappedEncoder[MandrillApiKey]
-  //  {
-//    override def apply(a: MandrillApiKey): Json = parse(s""" {"key" : "${a.value}"}    """).toOption.get
-//  }
-
+  implicit val mandrillApiKeyEncoder: Encoder[MandrillApiKey] = Encoder.encodeString.contramap[MandrillApiKey](_.value)
 }

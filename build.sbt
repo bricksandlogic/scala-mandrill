@@ -98,8 +98,8 @@ lazy val core = project
   .settings(
     name := "mandrill-core",
     libraryDependencies ++= Seq(
-      "com.beachape" %% "enumeratum" % "1.6.1",
-      "com.beachape" %% "enumeratum-circe" % "1.6.1"
+      ("com.beachape" %% "enumeratum" % "1.6.1").cross(CrossVersion.for3Use2_13),
+//      ("com.beachape" %% "enumeratum-circe" % "1.6.1").cross(CrossVersion.for3Use2_13)
 //      "joda-time" % "joda-time" % "2.9.6",
 //      "org.joda" % "joda-convert" % "1.8.1",
 //      "com.chuusai" %% "shapeless" % "2.3.2", // Generic programming for scala
@@ -115,7 +115,7 @@ lazy val testkit = project
   .settings(
     name := "mandrill-test-kit",
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.1.0",
+      "org.scalatest" %% "scalatest" % "3.2.12",
       "org.scalacheck" %% "scalacheck" % "1.16.0"
     )
   )
@@ -146,11 +146,26 @@ lazy val mandrillcirce = project
     libraryDependencies ++= Seq(
       "io.circe" %% "circe-core",
       "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser",
-      "io.circe" %% "circe-generic-extras"
-    ).map(_ % "0.14.1")
+      "io.circe" %% "circe-parser"
+    ).map(_ % "0.14.2")
   )
   .dependsOn(core, testkit % "test->compile")
+
+lazy val http4s = project
+  .in(file("mandrill-http4s"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(commonSettings)
+  .settings(publishSettings)
+  .settings(
+    name := "mandrill-http4s",
+    libraryDependencies ++= Seq(
+      "org.http4s" %% "http4s-dsl",
+      "org.http4s" %% "http4s-ember-client",
+      "org.http4s" %% "http4s-circe",
+    ).map(_ % "0.23.12"),
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "it"
+  )
+  .dependsOn(core, mandrillcirce)
 
 lazy val noPublishSettings = Seq(
   publish := (),
@@ -167,7 +182,7 @@ lazy val scala_mandrill =
     )
     .settings(publishSettings)
     .settings(noPublishSettings)
-    .aggregate(core, testkit, mandrillcirce)
+    .aggregate(core, testkit, mandrillcirce, http4s)
 
 //lazy val docs = project
 //  .in(file("docs"))

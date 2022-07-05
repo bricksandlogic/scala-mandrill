@@ -36,19 +36,24 @@ final case class SendTemplateResponse(
 )
 
 object SendTemplateResponse {
-  sealed abstract class Status(val status: String) extends EnumEntry
+  sealed abstract class Status(val status: String) extends EnumEntry {
+    override def entryName: String = status
+  }
 
   case object Status extends Enum[Status] {
-    case object Send extends Status("sent")
+    case object Sent extends Status("sent")
     case object Scheduled extends Status("scheduled")
     case object Queued extends Status("queued")
     case object Rejected extends Status("rejected")
     case object Invalid extends Status("invalid")
 
-    val values = findValues
+    // todo: revert to macros when Enumeratum supports Scala 3
+    val values = Vector(Sent, Scheduled, Queued, Rejected, Invalid)
   }
 
-  sealed abstract class RejectReason(val reason: String) extends EnumEntry
+  sealed abstract class RejectReason(val reason: String) extends EnumEntry {
+    override def entryName: String = reason
+  }
 
   case object RejectReason extends Enum[RejectReason] {
     case object Rule extends RejectReason("rule")
@@ -59,8 +64,9 @@ object SendTemplateResponse {
     case object SoftBounce extends RejectReason("soft-bounce")
     case object InvalidSender extends RejectReason("invalid-sender")
     case object TestModeLimit extends RejectReason("test-mode-limit")
-    val values = findValues
 
+    // todo: revert to macros when Enumeratum supports Scala 3
+    val values = Vector(Rule, Spam, Unsubscribed, Custom, HardBounce, SoftBounce, InvalidSender, TestModeLimit)
   }
 
 }

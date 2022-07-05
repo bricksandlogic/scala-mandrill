@@ -16,14 +16,19 @@
 
 package net.gutefrage.mandrill.circe
 
+import enumeratum.{Enum, EnumEntry}
 import io.circe.{Decoder, Encoder}
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
-import net.gutefrage.mandrill.users.{Ping, Pong}
-import net.gutefrage.mandrill.circe.core._
 
-package object users {
+object EnumCodecs {
 
-  implicit lazy val decodeElasticSearchMeta: Decoder[Pong] = deriveDecoder[Pong]
-  implicit lazy val encodeElasticSearchMeta: Encoder[Ping] = deriveEncoder[Ping]
+  private[circe] def enumDecoder[A <: EnumEntry, E <: Enum[A]](e: E): Decoder[A] =
+    Decoder.decodeString.emap { value =>
+      e.withNameInsensitiveEither(value)
+        .left
+        .map(_ => s"$value is not a member of enum ${e.getClass.getSimpleName}")
+    }
+
+  private[circe] def enumEncoder[A <: EnumEntry, E <: Enum[A]](e: E): Encoder[A] =
+    Encoder.encodeString.contramap[A](_.entryName)
 
 }

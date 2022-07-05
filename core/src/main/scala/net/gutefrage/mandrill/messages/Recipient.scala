@@ -38,16 +38,19 @@ object Recipient {
    *
    * The header type to use for the recipient
    */
-  sealed abstract class RecipientType(val name: String) extends EnumEntry
+  sealed abstract class RecipientType(val name: String) extends EnumEntry {
+    override def entryName: String = name
+  }
 
   case object RecipientType extends Enum[RecipientType] {
     case object To extends RecipientType("to")
     case object Cc extends RecipientType("cc")
     case object Bcc extends RecipientType("bcc")
 
+    // todo: revert to macros when Enumeratum supports Scala 3
     /**
      * Enumeration of all defined [[RecipientType]]s
      */
-    val values = findValues
+    val values = Vector(To, Cc, Bcc)
   }
 }
