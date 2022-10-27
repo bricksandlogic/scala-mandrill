@@ -50,7 +50,7 @@ class Http4sMandrillClientSpec extends AsyncWordSpec with Matchers {
             .subject("Test email")
             .from(Some("test@scalamandrill.com"))
             .signingDomain("scalamandrill.com")
-            .to("test@gmail.com")
+            .to("test@gmail.com", "var1" -> "abc")
             .templateContent(("abc", "def")))
       }.map {
         _ should matchPattern {
