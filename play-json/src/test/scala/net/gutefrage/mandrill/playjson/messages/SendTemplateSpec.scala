@@ -58,8 +58,8 @@ class SendTemplateSpec extends WordSpec with MustMatchers with PropertyChecks {
     "serialize recipient with merge vars" in { mergeVars: RecipientMergeVars =>
       val json = Json.toJson(mergeVars)
 
-      (json \ "recipient" \ "email").as[String] mustBe mergeVars.recipient.email.value
-      (json \ "merge_vars").as[JsArray].value must have size mergeVars.merge_vars.size
+      (json \ "recipient" \ "email").as[String] mustBe mergeVars.rcpt.email.value
+      (json \ "merge_vars").as[JsArray].value must have size mergeVars.vars.size
     }
 
     "serialize a SendTemplate" in {

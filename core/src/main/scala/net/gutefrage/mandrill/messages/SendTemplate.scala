@@ -100,7 +100,7 @@ case class SendTemplate(
   def to(recipient: Recipient, mergeVars: Seq[MergeVar] = Nil): SendTemplate = {
     val newRecipients = message.to :+ recipient
     val newRecipientMergeVars = message.merge_vars ++ (
-      if (mergeVars.isEmpty) Seq.empty else Seq(RecipientMergeVars(recipient, mergeVars))
+      if (mergeVars.isEmpty) Seq.empty else Seq(RecipientMergeVars(recipient.email, mergeVars))
     )
     val newMessage = message.copy(merge_vars = newRecipientMergeVars, to = newRecipients)
     copy(message = newMessage)

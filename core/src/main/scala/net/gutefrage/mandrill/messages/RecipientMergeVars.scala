@@ -25,8 +25,8 @@ package net.gutefrage.mandrill.messages
  *
  * per-recipient merge variables, which override global merge variables with the same name.
  *
- * @param recipient The recipient associated with the given `merge_vars`. See [[Recipient]]
- * @param merge_vars The specific merge_vars for the given `recipient`. See [[MergeVar]]
+ * @param rcpt The recipient associated with the given `merge_vars`. See [[Recipient]]
+ * @param vars The specific merge_vars for the given `recipient`. See [[MergeVar]]
  * @see [[SendTemplate]]
  */
-final case class RecipientMergeVars(recipient: Recipient, merge_vars: Seq[MergeVar])
+final case class RecipientMergeVars(rcpt: Email, vars: Seq[MergeVar])

@@ -52,7 +52,7 @@ object messages {
   val recipientMergeVarsGen: Gen[RecipientMergeVars] = for {
     recipient <- recipientGen
     vars <- Gen.listOf(mergeVarGen)
-  } yield RecipientMergeVars(recipient, vars)
+  } yield RecipientMergeVars(recipient.email, vars)
 
   val messageGen: Gen[Message] = for {
     recipientMergeVars <- Gen.listOf(recipientMergeVarsGen)
